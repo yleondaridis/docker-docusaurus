@@ -2,9 +2,12 @@ FROM node:current-alpine3.15
 LABEL maintainer="Deokgyu Yang <secugyu@gmail.com>" \
       description="Lightweight Docusaurus container with Node.js based on Alpine Linux"
 
-RUN apk add --no-cache \
-    bash bash-completion supervisor \
-    autoconf automake build-base libtool nasm
+ADD http://pki.mitre.org/ZScaler_Root.crt ./certs/
+RUN for cert in ./certs/*.crt; \
+        do cat $cert >> /etc/ssl/certs/ca-certificates.crt; \
+        done \
+    && apk add --quiet --no-cache bash bash-completion supervisor autoconf automake build-base libtool nasm
+
 
 # Environments
 ENV TARGET_UID=1000
